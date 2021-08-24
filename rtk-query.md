@@ -17,7 +17,7 @@ RTK Query는 **Redux Toolkit 패키지에 포함된 선택적 애드온**이며,
 * 사용자가 UI와 상호작용하고 있을 때 캐시 수명을 관리해야 합니다.
 * UI가 빠르다고 느껴지도록 하기 위해 업데이트 과정을 최적화해야 합니다.
 
-  Redux에는 위와 같은 유즈 케이스를 해결하기 위해 도와주는 추가 기능이 내장되어 있지 않습니다. Redux는 항상 최소한의 도움만 제공하고 실제 로직을 작성하는 것은 모두 개발자가 직접 해결해야 합니다. 이 과정을 보다 더 간편하게 진행할 수 있도록 Redux 공식 문서에서 [로딩 상태와 요청 결과를 추적하기 위한 전체 요청 과정에서 액션을 디스패치하는 과정](https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#async-request-status)을 상세히 가르쳐주고 있고, 이 전형적인 패턴을 추상화하고자 [Redux Toolkit의 `createAsyncThunk` API](https://redux-toolkit.js.org/api/createAsyncThunk)가 생겨났습니다. 그러나 많은 개발자들이 여전히 로딩 상태와 캐싱된 데이터를 관리하기 위해 수많은 리듀서 로직을 직접 작성하고 있습니다.
+Redux에는 위와 같은 유즈 케이스를 해결하기 위해 도와주는 추가 기능이 내장되어 있지 않습니다. Redux는 항상 최소한의 도움만 제공하고 실제 로직을 작성하는 것은 모두 개발자가 직접 해결해야 합니다. 이 과정을 보다 더 간편하게 진행할 수 있도록 Redux 공식 문서에서 [로딩 상태와 요청 결과를 추적하기 위한 전체 요청 과정에서 액션을 디스패치하는 과정](https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#async-request-status)을 상세히 가르쳐주고 있고, 이 전형적인 패턴을 추상화하고자 [Redux Toolkit의 `createAsyncThunk` API](https://redux-toolkit.js.org/api/createAsyncThunk)가 생겨났습니다. 그러나 많은 개발자들이 여전히 로딩 상태와 캐싱된 데이터를 관리하기 위해 수많은 리듀서 로직을 직접 작성하고 있습니다.
 
 지난 2년 간 React 커뮤니티는 **"데이터 가져오기와 캐싱하기"는 "상태 관리"와 완전히 다른 관심사**라는 사실을 깨닫게 되었습니다. 여러분은 지금까지 그래왔듯이 앞으로도 데이터를 캐싱하기 위해 Redux와 같은 상태 관리 라이브러리를 사용할 수도 있지만, 데이터를 가져오는 상황을 해결하기 위한 목적으로 만들어진 도구를 사용하는 것이 더 나을 것입니다.
 
