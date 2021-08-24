@@ -8,7 +8,7 @@ description: 'RTK Query의 기본 개념을 소개하고, RTK Query를 어떻게
 
 RTK Query는 **Redux Toolkit 패키지에 포함된 선택적 애드온**이며, Redux Toolkit에 있는 다른 API들의 위에 기능이 구현되어 있으므로 함께 사용할 수 있습니다.
 
-### 동기
+## 동기
 
 웹 애플리케이션은 보통 데이터를 화면에 보여주기 위해 서버로부터 그 데이터를 가져올 필요가 있습니다. 또한, 그 데이터를 업데이트하고, 업데이트된 데이터를 서버로 보내고, 서버에 있는 데이터와 동기화한 클라이언트 측 데이터를 캐싱하여 보관할 필요도 있습니다. 요즘의 웹 애플리케이션들은 다음과 같은 많은 추가 기능들을 구현할 필요가 있기 때문에 이 과정들은 너무 복잡해지기 마련입니다:
 
@@ -31,9 +31,9 @@ RTK Query는 이런 상황에서 해결법을 제시한 다른 선구자들\(Apo
 * OpenAPI와 GraphQL 스키마에서 API slice를 만드는 예제 코드를 제공합니다.
 * 마지막으로, RTK Query는 완전히 TypeScript를 기반으로 작성되어 완벽한 TypeScript 사용 경험을 제공합니다.
 
-### 포함 기능
+## 포함 기능
 
-#### API
+### API
 
 RTK Query는 다음과 같은 API를 포함하고 있습니다:
 
@@ -42,9 +42,9 @@ RTK Query는 다음과 같은 API를 포함하고 있습니다:
 * `ApiProvider`: **Redux Store가 없는 경우**, `Provider`처럼 사용할 수 있습니다. **이미 사용 중인 Redux Store가 있는 경우 서로 충돌이 일어날 수 있습니다.**
 * `setupListeners()`: `refetchOnMount`와 `refetchOnReconnect`를 사용할 수 있도록 합니다.
 
-### 기본 사용법
+## 기본 사용법
 
-#### API slice 만들기
+### API slice 만들기
 
 RTK Query는 Redux Toolkit 패키지 설치 과정에서 함께 설치됩니다. 다음과 같은 두 엔트리 포인트를 통해 사용할 수 있습니다:
 
@@ -78,7 +78,7 @@ export const pokemonApi = createApi({
 export const { useGetPokemonByNameQuery } = pokemonApi;
 ```
 
-#### Store 구성하기
+### Store 구성하기
 
 API slice는 Redux slice 리듀서와 구독 수명을 관리하는 커스텀 미들웨어를 자동으로 생성하고, 이를 포함하고 있습니다. 다음과 같이 둘 모두 Redux store에 등록해야 합니다:
 
@@ -103,7 +103,7 @@ export const store = configureStore({
 setupListeners(store.dispatch)
 ```
 
-#### 컴포넌트에서 Hooks 사용하기
+### 컴포넌트에서 Hooks 사용하기
 
 마지막으로, API slice로부터 자동 생성된 React hooks를 컴포넌트 파일에 import하고 필요한 파라미터와 함께 hooks를 호출하는 방식으로 사용하면 됩니다:
 
