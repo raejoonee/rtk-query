@@ -8,7 +8,7 @@ description: 'RTK Query의 기본 개념을 소개하고, RTK Query를 어떻게
 
 RTK Query는 **Redux Toolkit 패키지에 포함된 선택적 애드온**이며, Redux Toolkit에 있는 다른 API들의 위에 기능이 구현되어 있으므로 함께 사용할 수 있습니다.
 
-## 동기
+### 동기
 
 웹 애플리케이션은 보통 데이터를 화면에 보여주기 위해 서버로부터 그 데이터를 가져올 필요가 있습니다. 또한, 그 데이터를 업데이트하고, 업데이트된 데이터를 서버로 보내고, 서버에 있는 데이터와 동기화한 클라이언트 측 데이터를 캐싱하여 보관할 필요도 있습니다. 요즘의 웹 애플리케이션들은 다음과 같은 많은 추가 기능들을 구현할 필요가 있기 때문에 이 과정들은 너무 복잡해지기 마련입니다:
 
@@ -17,7 +17,7 @@ RTK Query는 **Redux Toolkit 패키지에 포함된 선택적 애드온**이며,
 * 사용자가 UI와 상호작용하고 있을 때 캐시 수명을 관리해야 합니다.
 * UI가 빠르다고 느껴지도록 하기 위해 업데이트 과정을 최적화해야 합니다.
 
-Redux에는 위와 같은 유즈 케이스를 해결하기 위해 도와주는 추가 기능이 내장되어 있지 않습니다. Redux는 항상 최소한의 도움만 제공하고 실제 로직을 작성하는 것은 모두 개발자가 직접 해결해야 합니다. 이 과정을 보다 더 간편하게 진행할 수 있도록 Redux 공식 문서에서 [로딩 상태와 요청 결과를 추적하기 위한 전체 요청 과정에서 액션을 디스패치하는 과정](https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#async-request-status)을 상세히 가르쳐주고 있고, 이 전형적인 패턴을 추상화하고자 [Redux Toolkit의 `createAsyncThunk` API](https://redux-toolkit.js.org/api/createAsyncThunk)가 생겨났습니다. 그러나 많은 개발자들이 여전히 로딩 상태와 캐싱된 데이터를 관리하기 위해 수많은 리듀서 로직을 직접 작성하고 있습니다.
+  Redux에는 위와 같은 유즈 케이스를 해결하기 위해 도와주는 추가 기능이 내장되어 있지 않습니다. Redux는 항상 최소한의 도움만 제공하고 실제 로직을 작성하는 것은 모두 개발자가 직접 해결해야 합니다. 이 과정을 보다 더 간편하게 진행할 수 있도록 Redux 공식 문서에서 [로딩 상태와 요청 결과를 추적하기 위한 전체 요청 과정에서 액션을 디스패치하는 과정](https://redux.js.org/tutorials/fundamentals/part-7-standard-patterns#async-request-status)을 상세히 가르쳐주고 있고, 이 전형적인 패턴을 추상화하고자 [Redux Toolkit의 `createAsyncThunk` API](https://redux-toolkit.js.org/api/createAsyncThunk)가 생겨났습니다. 그러나 많은 개발자들이 여전히 로딩 상태와 캐싱된 데이터를 관리하기 위해 수많은 리듀서 로직을 직접 작성하고 있습니다.
 
 지난 2년 간 React 커뮤니티는 **"데이터 가져오기와 캐싱하기"는 "상태 관리"와 완전히 다른 관심사**라는 사실을 깨닫게 되었습니다. 여러분은 지금까지 그래왔듯이 앞으로도 데이터를 캐싱하기 위해 Redux와 같은 상태 관리 라이브러리를 사용할 수도 있지만, 데이터를 가져오는 상황을 해결하기 위한 목적으로 만들어진 도구를 사용하는 것이 더 나을 것입니다.
 
@@ -31,9 +31,9 @@ RTK Query는 이런 상황에서 해결법을 제시한 다른 선구자들\(Apo
 * OpenAPI와 GraphQL 스키마에서 API slice를 만드는 예제 코드를 제공합니다.
 * 마지막으로, RTK Query는 완전히 TypeScript를 기반으로 작성되어 완벽한 TypeScript 사용 경험을 제공합니다.
 
-## 포함 기능
+### 포함 기능
 
-### API
+#### API
 
 RTK Query는 다음과 같은 API를 포함하고 있습니다:
 
@@ -42,9 +42,9 @@ RTK Query는 다음과 같은 API를 포함하고 있습니다:
 * `ApiProvider`: **Redux Store가 없는 경우**, `Provider`처럼 사용할 수 있습니다. **이미 사용 중인 Redux Store가 있는 경우 서로 충돌이 일어날 수 있습니다.**
 * `setupListeners()`: `refetchOnMount`와 `refetchOnReconnect`를 사용할 수 있도록 합니다.
 
-## 기본 사용법
+### 기본 사용법
 
-### API slice 만들기
+#### API slice 만들기
 
 RTK Query는 Redux Toolkit 패키지 설치 과정에서 함께 설치됩니다. 다음과 같은 두 엔트리 포인트를 통해 사용할 수 있습니다:
 
@@ -78,7 +78,7 @@ export const pokemonApi = createApi({
 export const { useGetPokemonByNameQuery } = pokemonApi;
 ```
 
-### Store 구성하기
+#### Store 구성하기
 
 API slice는 Redux slice 리듀서와 구독 수명을 관리하는 커스텀 미들웨어를 자동으로 생성하고, 이를 포함하고 있습니다. 다음과 같이 둘 모두 Redux store에 등록해야 합니다:
 
@@ -103,7 +103,7 @@ export const store = configureStore({
 setupListeners(store.dispatch)
 ```
 
-### 컴포넌트에서 Hooks 사용하기
+#### 컴포넌트에서 Hooks 사용하기
 
 마지막으로, API slice로부터 자동 생성된 React hooks를 컴포넌트 파일에 import하고 필요한 파라미터와 함께 hooks를 호출하는 방식으로 사용하면 됩니다:
 
