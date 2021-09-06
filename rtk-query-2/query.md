@@ -142,3 +142,102 @@ export const PostDetail = ({ id }: { id: string }) => {
 2. 요청이 `pollingInterval` 에 의해 다시 실행될 때마다, `post.name` 옆에 '데이터를 다시 가져오는 중...'이 보입니다.
 3. 만약 사용자가 이 `PostDetail` 컴포넌트를 닫았다가 허용된 시간 내에 다시 열었을 경우, 캐싱된 데이터가 즉각 보여지게 되고 기존에 명시한 행동을 스스로 알아서 다시 이어서 시작합니다.
 
+### 쿼리 로딩 상태
+
+React에 최적화된 버전_\(역주: '@reduxjs/toolkit/query/react'의 경로를 통해 `import` 되었다는 뜻입니다.\)_의 `createApi` 메소드를 통해서 자동으로 생성된 `useQuery` hook은 주어진 쿼리의 현재 상태를 반영하는 불리언 값을 제공합니다.
+
+RTK Query는 유도된 정보를 제공하는 데 더 큰 유연성을 제공하기 위해서 쿼리 엔드포인트에 대해  `isLoading` 과 `isFetching` 을 의미론적으로 구별합니다. 
+
+* `isLoading` 은 주어진 hook의 쿼리가 _처음으로_ 전송되는 중인지 알려줍니다. 이 동안은 사용 가능한 데이터가 없습니다.
+* `isFetching` 은 주어진 엔드포인트로 쿼리와 파라미터가 전송되는 중인지 알려줍니다. 단, _처음으로_ 전송하는 경우는 아닐 수 있습니다. 이 hook에 의하여 전송된 요청이 이미 존재하는 경우가 있을 수 있고, 이 경우 사용 가능한 데이터가 있습니다.
+
+이 의미 구별은 개발자가 UI 행동을 처리하는 데 더 적절한 방법을 사용할 수 있도록 선택지를 제공합니다. 예를 들면, 처음 로딩이 일어나는 동안 스켈레톤을 보여주기 위해 `isLoading` 을 사용할 수 있고, 사용자가 첫 번째 페이지에서 두 번째 페이지로 넘어갈 때 기존에 캐싱된 데이터를 지우고 새로운 데이터를 가져오기 위해 `isFetching` 을 사용할 수 있게 됩니다.
+
+```typescript
+import { Skeleton } from './Skeleton';
+import { useGetPostsQuery } from './api';
+
+function App() {
+  const { data = [], isLoading, isFetching, isError } = useGetPostsQuery();
+
+  if (isError) return <div>에러가 발생했습니다!</div>;
+
+  if (isLoading) return <Skeleton />;
+
+  return (
+    <div className={isFetching ? 'posts--disabled' : ''}>
+      {data.map((post) => (
+        <Post
+          key={post.id}
+          id={post.id}
+          name={post.name}
+          disabled={isFetching}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+### 쿼리 캐시 키
+
+여러분이 쿼리를 실행할 때 RTK Query는 자동으로 요청에 대한 내부 `queryCacheKey` 를 생성하고 요청 파라미터를 직렬화합니다. 이 이후로 똑같은 `queryCacheKey` 를 생성하는 모든 요청들은 결과 데이터를 기존 데이터와 비교한 뒤 불필요한 중복 데이터를 생성하지 않고 기존의 데이터를 제거합니다. 그리고 만약 해당 쿼리를 구독하고 있는 컴포넌트에 의해 `refetch` 가 발생할 경우 업데이트된 내용을 모두 공유하게 합니다.
+
+### 쿼리 결과로부터 데이터 얻기
+
+쿼리를 구독하고 있는 부모 컴포넌트가 있는 상황에서 해당 쿼리에 있는 아이템 하나를 자식 컴포넌트에서 사용해야 할 때가 있습니다. 대부분의 경우 이미 요청에 대한 응답을 보유한 상황에서 추가 요청을 만들고 싶지는 않을 겁니다.
+
+`selectFromResult` 를 사용하면 애플리케이션의 퍼포먼스를 저해하지 않으면서 쿼리 결과의 특정 세그먼트를 가져올 수 있습니다. 이 기능을 사용할 때 선택한 항목의 기본 데이터가 변경되지 않으면 구성 요소가 다시 렌더링되지 않습니다. 만약 선택한 항목이 더 큰 Collection\(Array, Map, Set 등\)의 한 요소인 경우, 동일한 Collection의 요소 변경 사항을 무시합니다.
+
+```typescript
+function PostsList() {
+  const { data: posts } = api.useGetPostsQuery();
+
+  return (
+    <ul>
+      {posts?.data?.map((post) => (
+        <PostById key={post.id} id={post.id} />
+      ))}
+    </ul>
+  );
+}
+
+function PostById({ id }: { id: number }) {
+  // 주어진 id를 통해 post를 선택하고,
+  // 주어진 post의 data가 바뀔 때만 렌더링이 다시 일어납니다.
+  const { post } = api.useGetPostsQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      post: data?.find((post) => post.id === id),
+    }),
+  });
+
+  return <li>{post?.name}</li>;
+}
+```
+
+### 데이터를 다시 가져오도록 강제하기
+
+기본적으로 이미 존재하는 쿼리와 똑같은 쿼리를 만드는 컴포넌트를 추가하는 것은 새 요청을 만들지 않습니다. 그 요청에 대한 데이터는 이미 캐싱되어 있을 것이고, 캐싱된 데이터를 사용하면 되기 때문입니다. 특정 상황에서 이런 특성을 무시하고 데이터를 다시 가져오도록 강제해야 한다면 hook이 반환하는 `refetch` 함수를 호출하면 됩니다.
+
+만약 여러분이 React를 사용하고 있지 않거나 hook을 사용하기 싫다면, 다음과 같은 방법으로 `refetch` 에 접근할 수 있습니다.
+
+```typescript
+const { status, data, error, refetch } = dispatch(
+  pokemonApi.endpoints.getPokemon.initiate('bulbasaur')
+);
+```
+
+## 예제: 중복 요청 제거, 캐싱
+
+이 예제는 같은 엔드포인트를 향한 중복된 요청을 어떻게 처리하는지, 어떤 방식으로 캐싱을 진행하는지 확인할 수 있는 예제입니다.
+
+1. 첫 번째 `Pokemon` 컴포넌트가 마운트되며 그 순간 즉시 'bulbasaur'_\(이상해씨\)_의 데이터를 가져옵니다.
+2. 1초 가량이 지난 뒤, 다른 `Pokemon` 컴포넌트가 'bulbasaur'_\(이상해씨\)_를 렌더링합니다.
+   * 'Loading...' 메시지를 보이지도 않고, 개발자 도구를 통해 확인해 보면 새 네트워크 요청을 생성하지도 않는다는 것을 확인할 수 있습니다. 즉, 2번 과정에서 캐싱된 데이터를 사용한다는 뜻입니다!
+3. 다음으로 'pikachu'_\(피카츄\)_를 렌더링하는 `Pokemon` 컴포넌트가 생기고, 새 네트워크 요청이 발생합니다.
+4. 여러분이 `Refetch` 버튼을 클릭하면, 해당 포켓몬의 데이터를 렌더링하고 있는 모든 컴포넌트가 단 한 번의 요청으로 모두 업데이트됩니다.
+
+{% embed url="https://codesandbox.io/embed/github/reduxjs/redux-toolkit/tree/master/examples/query/react/deduping-queries?autoresize=1&fontsize=12&hidenavigation=1&theme=dark" %}
+
+`Add bulbasaur` 버튼을 클릭해서 이상해씨를 더 만들어보세요. 새로 생성된 이상해씨를 렌더링하고 있는 컴포넌트도 기존의 이상해씨를 렌더링하고 있는 컴포넌트와 함께 동시에 데이터를 갱신하는 것을 확인할 수 있을 것입니다.
+
