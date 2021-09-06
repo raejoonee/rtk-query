@@ -136,36 +136,9 @@ export default function App() {
 
 ### 심화 예제
 
-RTK Query는 같은 쿼리를 구독하고 있는 모든 컴포넌트에 대해 항상 같은 데이터를 사용하도록 합니다. 중복된 요청은 자동으로 제거하기 때문에 개발자가 퍼포먼스 최적화를 위해서 in-flight request\(이미 요청이 시작됐지만 아직 완료되지 못한 요청\)가 있는지 일일히 직접 확인할 필요가 없습니다. 아래 코드를 실행하고 브라우저 관리자 도구의 네트워크 패널을 관찰해보세요. _\(역주: 이 문서에서는 코드를 실행할 수 없으니_ [_공식 문서_](https://redux-toolkit.js.org/tutorials/rtk-query#advanced-example)_에서 코드를 실행해 보세요.\)_
+RTK Query는 같은 쿼리를 구독하고 있는 모든 컴포넌트에 대해 항상 같은 데이터를 사용하도록 합니다. 중복된 요청은 자동으로 제거하기 때문에 개발자가 퍼포먼스 최적화를 위해서 in-flight request\(이미 요청이 시작됐지만 아직 완료되지 못한 요청\)가 있는지 일일히 직접 확인할 필요가 없습니다. 아래 코드를 실행하고 브라우저 관리자 도구의 네트워크 패널을 관찰해보세요.
 
-```typescript
-import './styles.css';
-import { Pokemon } from './Pokemon';
-import { useState } from 'react';
-
-const pokemon = ['bulbasaur', 'pikachu', 'ditto', 'bulbasaur'];
-
-export default function App() {
-  const [pollingInterval, setPollingInterval] = useState(0);
-
-  return (
-    <div className="App">
-      <select
-        onChange={(change) => setPollingInterval(Number(change.target.value))}
-      >
-        <option value={0}>Off</option>
-        <option value={1000}>1s</option>
-        <option value={5000}>5s</option>
-      </select>
-      <div>
-        {pokemon.map((poke, index) => (
-          <Pokemon key={index} name={poke} pollingInterval={pollingInterval} />
-        ))}
-      </div>
-    </div>
-  );
-}
-```
+{% embed url="https://codesandbox.io/embed/github/reduxjs/redux-toolkit/tree/master/examples/query/react/advanced?autoresize=1&fontsize=12&hidenavigation=1&theme=dark" %}
 
 컴포넌트 4개를 렌더링하지만, 네트워크 요청은 3번만 발생하는 것을 확인할 수 있습니다. `bulbasaur`_\(역주: 이상해씨\)_의 데이터를 요청하는 컴포넌트가 두 개 있지만, 요청은 한 번만 발생하기 때문입니다. 또한, 두 컴포넌트의 로딩 상태가 자동으로 동기화되는 것도 확인할 수 있습니다. 드롭다운 값을 바꿔가면서 이 방식이 어떻게 계속되는지 한 번 확인해 보세요.
 
