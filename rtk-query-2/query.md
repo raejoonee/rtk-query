@@ -1,5 +1,5 @@
 ---
-description: RTK Query의 모든 것은 Query로부터 시작됩니다.
+description: RTK Query에서 데이터 가져오기를 위해 사용합니다.
 ---
 
 # Query
@@ -12,7 +12,7 @@ Query\(이하 '쿼리'\)는 RTK Query를 사용할 때 가장 흔하게 사용�
 
 여러분이 작업 중인 환경에 따라 `fetchBaseQuery` 또는 `fetch` 를 사용하기 위해서 `fetch` 를 `node-fetch` 또는 `cross-fetch` 등으로 폴리필해야 할 수도 있습니다. `useQuery` 의 사용법과 더 자세한 정보를 알아보려면 [이 곳](https://redux-toolkit.js.org/rtk-query/api/created-api/hooks#usequery)을 참조하세요.
 
-##  쿼리 엔드포인트 정의하기
+## 쿼리 엔드포인트 정의하기
 
 쿼리 엔드포인트는 `createApi` 의 `endpoints` 내부에서 객체를 반환하고 필드를 `builder.query()` 메소드를 사용하여 정의하는 방식으로 정의합니다. 또한 쿼리 파라미터를 포함하여 URL을 구성하는 `query` 콜백 함수 하나를 정의해야 합니다. 만약 임의의 비동기 로직을 처리하고 결과를 반환해야 한다면 [`queryFn` 콜백 함수](https://redux-toolkit.js.org/rtk-query/usage/customizing-queries#customizing-queries-with-queryfn)로 이를 대체할 수 있습니다.
 
@@ -21,7 +21,7 @@ Query\(이하 '쿼리'\)는 RTK Query를 사용할 때 가장 흔하게 사용�
 쿼리 엔드포인트는 요청에 따른 결과가 캐시되기 전에 응답 내용을 수정할 수 있고, 캐시 무효화를 식별하기 위해 태그를 정의할 수 있고, 캐시 항목이 추가 및 제거될 때마다 추가 로직을 실행하기 위해서 캐시 라이프사이클 콜백 함수를 제공할 수 있습니다.
 
 ```typescript
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query';
 import { Post } from './types';
 
 const api = createApi({
@@ -103,7 +103,7 @@ React Hook을 사용하면, RTK Query가 제공하는 유용한 추가 기능들
 
 ### 자주 사용되는 쿼리 Hook 반환값
 
-쿼리 hook은 요청의 현재 생명 주기 상태에 따라 상태 불리언 값을 반환하기도 하고, 쿼리 요청에 따른 가장 최근의 `data` 를 반환하기도 합니다. 이 모든 값이 프로퍼티의 형태로 들어있는 객체를 반환하는 형태로 말입니다. 다음은 여러분이 가장 자주 사용하게 될 프로퍼티들입니다. \(역주: 대부분의 경우 객체 비구조화 할당의 방법으로 원하는 프로퍼티만 추출해서 사용하게 됩니다.\)
+쿼리 hook은 요청의 현재 생명 주기 상태에 따라 상태 불리언 값을 반환하기도 하고, 쿼리 요청에 따른 가장 최근의 `data` 를 반환하기도 합니다. 이 모든 값이 프로퍼티의 형태로 들어있는 객체를 반환하는 형태로 말입니다. 다음은 여러분이 가장 자주 사용하게 될 프로퍼티들입니다. _\(역주: 대부분의 경우 객체 비구조화 할당의 방법으로 원하는 프로퍼티만 추출해서 사용하게 됩니다.\)_
 
 * `data`: 쿼리가 반환한 값입니다.
 * `error`: 쿼리를 실행하던 도중 에러가 발생했다면, 에러에 대한 정보입니다.
